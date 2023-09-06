@@ -3,10 +3,7 @@
     <BaseHeader />
     <div class="flex main-container">
       <BaseSide />
-      <div w="full" py="4">
-        <Logos my="4" />
-        <HelloWorld msg="Hello Vue 3 + Element Plus + Vite" />
-      </div>
+      <router-view />
     </div>
   </el-config-provider>
 </template>
@@ -20,4 +17,11 @@
 .main-container {
   height: calc(100vh - var(--ep-menu-item-height) - 3px);
 }
+
+body {
+  overflow: hidden;
+}
 </style>
+<script lang="ts">
+
+</script>

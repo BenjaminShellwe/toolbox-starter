@@ -24,7 +24,7 @@ onMounted(() => {
 
 function addTodo() {
   // ...
-  if (newTodo.value != '') {
+  if (newTodo.value !== '') {
     todos.value.push({id: id++, text: newTodo.value})
   }
 

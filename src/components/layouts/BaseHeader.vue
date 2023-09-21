@@ -13,7 +13,9 @@ import { toggleDark } from "~/composables";
         <router-link to="/studyVue">Vue.js</router-link>
 
       </el-menu-item>
-      <el-menu-item index="2-2" disabled>建设中</el-menu-item>
+      <el-menu-item index="2-2" >
+        <router-link to="/mqReader">MQ队列查看器</router-link>
+      </el-menu-item>
       <el-menu-item index="2-3" disabled>建设中</el-menu-item>
       <el-sub-menu index="2-4">
         <template #title>item four</template>

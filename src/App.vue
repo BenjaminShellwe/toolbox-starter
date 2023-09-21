@@ -40,6 +40,7 @@
 .vertical-container {
   display: flex;
   flex-direction: column; /* 竖向排列 */
+  width: 100%;
 }
 .vertical-item {
   margin: 10px; /* 可以添加间距 */

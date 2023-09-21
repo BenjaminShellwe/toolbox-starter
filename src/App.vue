@@ -40,6 +40,8 @@
 .vertical-container {
   display: flex;
   flex-direction: column; /* 竖向排列 */
+  margin-left: 10px;
+  margin-right: 10px;
   width: 100%;
 }
 .vertical-item {

@@ -1,3 +1,7 @@
+<script lang="ts">
+
+</script>
+
 <template>
   <el-config-provider namespace="ep">
     <BaseHeader />
@@ -51,6 +55,3 @@ body {
   overflow: hidden;
 }
 </style>
-<script lang="ts">
-
-</script>

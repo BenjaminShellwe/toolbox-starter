@@ -1,13 +1,22 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import {ElMessage, ElMessageBox} from "element-plus";
 const input1 = ref('')
 const input2 = ref('')
 
+let optionsValue: Record<any, any> ={
+  1: '单次监听',
+  2: '连续监听',
+  3: '持续监听(不建议)',}
 const radio1 = ref('1')
 
 const inputs = ref([{ text: '' }])
+
+const centerDialogVisible = ref(false)
+
+let contentAbout = ref('暂未监听')
+
+
 const addInput = () => {
   if (inputs.value.length  < 5){
     inputs.value.push({ text: '' })
@@ -20,16 +29,51 @@ const removeInput = (index: number) => {
   inputs.value.splice(index, 1)
 }
 
+const singleListen = () => {
+  console.log(radio1.value)
+  switch (radio1.value) {
+    case '1':
+      contentAbout.value = '正在监听'
+      setTimeout(() => {
+        contentAbout.value = '暂未监听'
+        ElNotification({
+          title: 'Info',
+          message: '监听队列结束',
+          type: 'info',
+          duration: 2000,
+        })
+      }, 3000)
 
-const handleClose = () => {
-  ElMessageBox.confirm('Are you sure to close this dialog?')
-      .then(() => {
-        // done()
+      break
+    case '2':
+      contentAbout.value = '正在监听'
+      setTimeout(() => {
+        contentAbout.value = '暂未监听'
+        ElNotification({
+          title: 'Info',
+          message: '监听队列结束',
+          type: 'info',
+          duration: 2000,
+        })
+      }, 25000)
+      break
+    case '3':
+      contentAbout.value = '正在监听'
+      ElNotification({
+        title: 'Warning',
+        message: '持续监听会获取大量数据！',
+        type: 'warning',
+        duration: 10000,
       })
-      .catch(() => {
-        // catch error
-      })
+      setTimeout(() => {
+        contentAbout.value = '暂未监听'
+      }, 300000)
+      break
+  }
+
+
 }
+
 </script>
 
 <template>
@@ -83,8 +127,8 @@ const handleClose = () => {
       <el-card class="box-card">
         <template #header>
           <div class="card-header">
-            <span>特殊选项</span>
-            <el-button text @click="handleClose" class="button" >说明</el-button>
+            <span>操作选项</span>
+            <el-button text @click="centerDialogVisible = true">说明</el-button>
           </div>
         </template>
         <div class="mb-2 flex items-center text-sm">
@@ -94,25 +138,43 @@ const handleClose = () => {
             <el-radio label="3" size="large">持续监听(不建议)</el-radio>
           </el-radio-group>
         </div>
-        <el-button-group class="ml-4" size="small">
-          <el-button type="primary" >队列获取</el-button>
-          <el-button type="primary" >清空队列</el-button>
-          <el-button type="primary" >清空窗口</el-button>
-        </el-button-group>
+        <el-button type="primary" size="small" @click="singleListen">队列获取</el-button>
+        <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="此操作不能取消"
+            placement="bottom"
+        >
+          <el-button type="warning" size="small">清空队列</el-button>
+        </el-tooltip>
+
+        <el-button type="primary" size="small">清空窗口</el-button>
 
       </el-card>
-
-      说明：因为需要数据传输，实际获取数据速度将会和本地运行Java程序有所差异<br>
-      获取数据越多速度越慢 但是是以 毫秒 (1/1000 秒) 计算<br>
-
     </el-col>
     <el-col :span= 8>
       <el-card>
-        MQ返回内容
+        <div class="card-header">
+          <span>MQ返回内容</span>
+          <el-button class="button" text>{{contentAbout}}</el-button>
+        </div>
+
       </el-card>
     </el-col>
   </el-row>
-
+  <el-dialog v-model="centerDialogVisible" title="使用前说明" width="30%" center>
+      这里控制着监听控制程序的运行方式<br>
+      其他内容补充中<br>
+      因为需要数据传输，实际获取数据速度将会和本地运行Java程序有所差异<br>
+      获取数据越多速度越慢 但是是以 毫秒 (1/1000 秒) 计算<br>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button type="primary" @click="centerDialogVisible = false">
+          Confirm
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>
@@ -136,6 +198,9 @@ const handleClose = () => {
 
 .box-card {
   margin-left: 10px;
+  margin-right: 10px;
+}
+.dialog-footer button:first-child {
   margin-right: 10px;
 }
 </style>

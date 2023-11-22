@@ -16,13 +16,15 @@ import { toggleDark } from "~/composables";
       <el-menu-item index="2-2" >
         <router-link to="/mqReader">MQ队列查看器</router-link>
       </el-menu-item>
-      <el-menu-item index="2-3" disabled>建设中</el-menu-item>
+      <el-menu-item index="2-3" >
+        <router-link to="/rtgsFunction">所谓的功能？？</router-link>
+      </el-menu-item>
       <el-sub-menu index="2-4">
         <template #title>item four</template>
         <el-menu-item index="2-4-1" disabled>建设中</el-menu-item>
       </el-sub-menu>
     </el-sub-menu>
-    <el-menu-item index="3" disabled>FakeGPT
+    <el-menu-item index="3" disabled>FakeAPI
 <!--      <router-link to="/fakeGPT" >FakeGPT</router-link>-->
       </el-menu-item>
     <el-menu-item index="4" disabled>建设中</el-menu-item>

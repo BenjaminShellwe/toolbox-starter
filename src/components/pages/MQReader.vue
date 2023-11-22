@@ -1,25 +1,37 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import axios from "axios";
 
 const input1 = ref('')
 const input2 = ref('')
-
+let emptyVisible = ref(true)
+let MQResponse = ref()
 let optionsValue: Record<any, any> ={
   1: '单次监听',
   2: '连续监听',
   3: '持续监听(不建议)',}
 const radio1 = ref('1')
-
 const inputs = ref([{ text: '' }])
-
 const centerDialogVisible = ref(false)
-
+const loadingVisible = ref(false)
 let contentAbout = ref('暂未监听')
-
+let tabIndex = 1
+const editableTabsValue = ref('0')
+const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `
 
 const addInput = () => {
   if (inputs.value.length  < 5){
     inputs.value.push({ text: '' })
+    addTab(editableTabsValue.value)
   }else{
     ElMessage.error('请不要监听过多队列')
   }
@@ -34,21 +46,35 @@ const singleListen = () => {
   switch (radio1.value) {
     case '1':
       contentAbout.value = '正在监听'
-      setTimeout(() => {
-        contentAbout.value = '暂未监听'
-        ElNotification({
-          title: 'Info',
-          message: '监听队列结束',
-          type: 'info',
-          duration: 2000,
-        })
-      }, 3000)
+      loadingVisible.value = true
+        axios.post('http://localhost:3000/api/fake')
+            .then(function (response) {
+              setTimeout(() => {
+                contentAbout.value = '暂未监听'
+                loadingVisible.value = false
+                MQResponse = response.data
+                emptyVisible.value = false
+                ElNotification({
+                  title: 'Info',
+                  message: '监听队列结束',
+                  type: 'info',
+                  duration: 2000,
+                })
+              }, 3000)
+
+              console.log(response);
+            })
+            .catch(function (error) {
+              console.log(error);
+            })
 
       break
     case '2':
       contentAbout.value = '正在监听'
+      loadingVisible.value = true
       setTimeout(() => {
         contentAbout.value = '暂未监听'
+        loadingVisible.value = false
         ElNotification({
           title: 'Info',
           message: '监听队列结束',
@@ -59,6 +85,7 @@ const singleListen = () => {
       break
     case '3':
       contentAbout.value = '正在监听'
+      loadingVisible.value = true
       ElNotification({
         title: 'Warning',
         message: '持续监听会获取大量数据！',
@@ -66,14 +93,46 @@ const singleListen = () => {
         duration: 10000,
       })
       setTimeout(() => {
+        loadingVisible.value = false
         contentAbout.value = '暂未监听'
       }, 300000)
       break
   }
-
-
 }
+const editableTabs = ref([
+  {
+    title: '其他队列1',
+    name: '1',
+    content: '此处还需要继续添加控制，属于额外',
+  }
+])
 
+const addTab = (targetName: string) => {
+  const newTabName = `${++tabIndex}`
+  editableTabs.value.push({
+    title: 'New Tab',
+    name: newTabName,
+    content: 'New Tab content',
+  })
+  editableTabsValue.value = newTabName
+}
+const removeTab = (targetName: any) => {
+  const tabs = editableTabs.value
+  let activeName = editableTabsValue.value
+  if (activeName === targetName) {
+    tabs.forEach((tab, index) => {
+      if (tab.name === targetName) {
+        const nextTab = tabs[index + 1] || tabs[index - 1]
+        if (nextTab) {
+          activeName = nextTab.name
+        }
+      }
+    })
+  }
+
+  editableTabsValue.value = activeName
+  editableTabs.value = tabs.filter((tab) => tab.name !== targetName)
+}
 </script>
 
 <template>
@@ -154,10 +213,61 @@ const singleListen = () => {
     </el-col>
     <el-col :span= 8>
       <el-card>
-        <div class="card-header">
-          <span>MQ返回内容</span>
-          <el-button class="button" text>{{contentAbout}}</el-button>
-        </div>
+        <el-space wrap
+                  fill
+                  :fill-ratio="100"
+                  :size="10"
+        >
+          <div class="card-header">
+            <span>MQ返回内容</span>
+            <el-tooltip
+                class="box-item"
+                effect="dark"
+                content="点击中止"
+                placement="bottom"
+            >
+              <el-button type="primary"
+                         v-loading="loadingVisible"
+                         :element-loading-spinner="svg"
+                         element-loading-svg-view-box="-10, -10, 50, 50"
+                         element-loading-background="rgba(122, 122, 122, 0.8)"
+              >
+                {{contentAbout}}
+              </el-button>
+            </el-tooltip>
+          </div>
+          <el-tabs type="border-card">
+            <el-tab-pane label="实时结果">
+              <el-empty description="Not listening" v-show="emptyVisible" />
+              {{MQResponse}}
+            </el-tab-pane>
+            <el-tab-pane label="查看代码">
+              <el-empty description="Not listening" v-show="emptyVisible" />
+            </el-tab-pane>
+            <el-tab-pane label="队列历史">
+              <el-empty description="Not listening" v-show="emptyVisible" />
+            </el-tab-pane>
+            <el-tab-pane label="队列详情">
+              <el-empty description="Not listening" v-show="emptyVisible" />
+            </el-tab-pane>
+          </el-tabs>
+          <el-tabs
+              v-model="editableTabsValue"
+              type="border-card"
+              class="demo-tabs"
+              closable
+              @tab-remove="removeTab"
+          >
+            <el-tab-pane
+                v-for="item in editableTabs"
+                :key="item.name"
+                :label="item.title"
+                :name="item.name"
+            >
+              {{ item.content }}
+            </el-tab-pane>
+          </el-tabs>
+        </el-space>
 
       </el-card>
     </el-col>
@@ -202,5 +312,19 @@ const singleListen = () => {
 }
 .dialog-footer button:first-child {
   margin-right: 10px;
+}
+.el-button .custom-loading .circular {
+  margin-right: 6px;
+  width: 18px;
+  height: 18px;
+  animation: loading-rotate 2s linear infinite;
+}
+.el-button .custom-loading .circular .path {
+  animation: loading-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-width: 2;
+  stroke: var(--el-button-text-color);
+  stroke-linecap: round;
 }
 </style>

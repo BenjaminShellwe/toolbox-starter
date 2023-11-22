@@ -21,6 +21,13 @@ export default defineConfig({
   server: {
     host: 'localhost',
     port: 80,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000/api', // 后端服务器地址
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // 可选，如果后端API的路径与前端不匹配，可以进行重写
+      },
+    },
   },
   resolve: {
     alias: {

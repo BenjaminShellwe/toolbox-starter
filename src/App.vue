@@ -47,6 +47,7 @@
   margin-left: 10px;
   margin-right: 10px;
   width: 100%;
+  overflow-y: auto;
 }
 .vertical-item {
   margin: 10px; /* 可以添加间距 */

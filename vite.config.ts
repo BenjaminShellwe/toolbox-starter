@@ -20,7 +20,7 @@ const pathSrc = path.resolve(__dirname, 'src')
 export default defineConfig({
   server: {
     host: 'localhost',
-    port: 80,
+    port: 82,
     proxy: {
       '/api': {
         target: 'http://localhost:3000/api', // 后端服务器地址

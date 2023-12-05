@@ -51,6 +51,7 @@ declare module 'vue' {
     MQReader: typeof import('./components/pages/MQReader.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SignAndLogin: typeof import('./components/pages/SignAndLogin.vue')['default']
     StudyVue: typeof import('./components/pages/StudyVue.vue')['default']
   }
   export interface ComponentCustomProperties {

@@ -6,6 +6,7 @@ import HelloWorld from "~/components/HelloWorld.vue";
 import StudyVue from "~/components/pages/StudyVue.vue";
 import MQReader from "~/components/pages/MQReader.vue";
 import FunctionBeenAsked from "~/components/pages/FunctionBeenAsked.vue";
+import SignAndLogin from "~/components/pages/SignAndLogin.vue";
 
 const routes: Array<RouteRecordRaw> = [
     { path: '/', component: HelloWorld },
@@ -19,6 +20,9 @@ const routes: Array<RouteRecordRaw> = [
         meta: { transition: 'slide-left' },
     },
     { path: '/rtgsFunction', component: FunctionBeenAsked,
+        meta: { transition: 'slide-left' },
+    },
+    { path: '/register', component: SignAndLogin,
         meta: { transition: 'slide-left' },
     }
     // 添加其他路由规则

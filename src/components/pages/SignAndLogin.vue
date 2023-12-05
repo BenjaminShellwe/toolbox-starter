@@ -1,0 +1,190 @@
+<script setup lang="ts">
+  import {reactive,ref} from "vue";
+
+  import {FormInstance,ElNotification} from "element-plus";
+  let outPrint = reactive({})
+
+  let isVariableTrue = false; // 初始变量状态为 false
+  let resolveFunc = null as (() => void) | null // Promise 的 resolve 函数
+
+  const showValue = ref(false)
+  const AllValueRef = ref<FormInstance>()
+  const loading = ref(false)
+  const AllValue = reactive({
+      username: '',
+      password: '',
+      module: '',
+      check: false
+  })
+
+
+  const rules = reactive({
+    username: [
+      { required: true, message: 'can not be empty', trigger: 'blur' },
+      { min: 6, max: 10, message: 'Length: 6 to 10 Characters', trigger: 'blur' },
+
+    ],
+    password: [
+      { required: true, message: 'can not be empty', trigger: 'blur' },
+      { min: 6, max: 12, message: 'Length: 6 to 12 Characters', trigger: 'blur' },
+    ]
+  })
+
+  const submitForm = async (formEl: FormInstance | undefined) => {
+    loading.value = true
+    if (!formEl) return
+    await formEl.validate((valid, fields) => {
+      if (valid) {
+        console.log('submit!')
+        //走前端在这里验证
+        if(AllValue.module != 'mix'){
+          //模拟后端校验，但是是手动确定
+          staticValue(true)
+          watching()
+          // cleanup()
+          // loading.value = false
+        }else{
+            ElNotification({
+              title: 'Info',
+              message: '后端正在进行中',
+              type: 'warning',
+            })
+          setTimeout(() => {
+              ElNotification({
+                title: 'Error',
+                message: '还没有编辑交互Java的代码',
+                type: 'error',
+              })
+            loading.value = false
+          }, 2000);
+        }
+
+
+      } else {
+        console.log('error submit!', fields)
+        openError()
+        cleanup()
+        loading.value = false
+        staticValue(false)
+      }
+    })
+  }
+  const staticValue = (b: boolean) => {
+    showValue.value = b
+  }
+  const handleClick = (b: boolean) => {
+    // 设置变量为 true，并执行 resolve 函数
+    // isVariableTrue = b
+    if (b) {
+      resolveFunc()
+      cleanup()
+      loading.value = false
+      staticValue(false)
+    }else{
+      openError()
+      cleanup()
+      loading.value = false
+      staticValue(false)
+    }
+  }
+
+  const waitForButtonClick = (): Promise<void> => {
+    return new Promise((resolve) => {
+      // 将 resolve 函数保存到组件实例中
+      resolveFunc = resolve;
+    });
+  }
+  const executeAfterButtonClick = async () =>{
+    await waitForButtonClick(); // 等待按钮点击事件
+    // 按钮点击后执行的操作
+    openSuccess()
+    cleanup()
+    loading.value = false
+  }
+
+  //监听按钮
+  const watching = async () => {
+    await executeAfterButtonClick()
+  }
+  const cleanup = () =>{
+    AllValue.username = ''
+    AllValue.password = ''
+    AllValue.module = ''
+    AllValue.check = false
+  }
+
+  const openSuccess = () => {
+    ElNotification({
+      title: 'Success',
+      message: 'I know this looks suck, but login success',
+      type: 'success',
+    })
+  }
+  const openError = () => {
+    ElNotification({
+      title: 'Error',
+      message: 'I know this looks suck, but login failed',
+      type: 'error',
+    })
+  }
+  //走java验证的代码
+</script>
+
+<template>
+  <el-row>
+    <el-col :span="12"
+            class="centered-card">
+      <el-card
+          style="height: 300px;width: 300px;"
+      >
+        <div class="login-form" v-loading="loading">
+          <el-form :model="AllValue" :rules="rules" ref="AllValueRef" size="small">
+            <el-form-item label="UserName" prop="username">
+              <el-input v-model="AllValue.username" placeholder="setup before login" />
+            </el-form-item>
+            <el-form-item label="PassWord" prop="password">
+              <el-input type="password" v-model="AllValue.password" placeholder="setup before login"></el-input>
+            </el-form-item>
+            <el-form-item label="LoginModule" prop="type">
+              <el-select v-model="AllValue.module" placeholder="Select type of module">
+                <el-option label="仅前端 Vue.js" value="pure" ></el-option>
+                <el-option label="走交互 Java" value="mix"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="Simulated Two-Factor" prop="checkbox">
+              <el-checkbox v-model="AllValue.check">check</el-checkbox>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="submitForm(AllValueRef)">登录</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </el-card>
+    </el-col>
+    <el-col :span="12">
+      <el-card>
+          <p v-show="showValue">
+            就先不模拟加密过程和数据库读写<br>
+            将机械验证的过程换成人为的手动<br>
+            登录请求为<br>
+            用户：{{ AllValue.username }}<br>
+            密码：{{ AllValue.password }}<br>
+            模式：{{ AllValue.module }}<br>
+            <button @click="handleClick(true)">confirm</button>
+            <button @click="handleClick(false)">denied</button>
+          </p>
+
+
+      </el-card>
+    </el-col>
+  </el-row>
+</template>
+
+<style scoped>
+.centered-card {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  height: 85vh; /* 设置容器高度，使卡片垂直居中 */
+}
+</style>

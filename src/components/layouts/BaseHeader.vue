@@ -23,6 +23,9 @@ import { toggleDark } from "~/composables";
         <template #title>item four</template>
         <el-menu-item index="2-4-1" disabled>建设中</el-menu-item>
       </el-sub-menu>
+      <el-menu-item index="2-5">
+        <router-link to="/register">功能2？？</router-link>
+      </el-menu-item>
     </el-sub-menu>
     <el-menu-item index="3" disabled>FakeAPI
 <!--      <router-link to="/fakeGPT" >FakeGPT</router-link>-->

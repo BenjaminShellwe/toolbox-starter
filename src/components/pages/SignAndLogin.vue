@@ -2,6 +2,7 @@
   import {reactive,ref} from "vue";
 
   import {FormInstance,ElNotification} from "element-plus";
+  import axios from "axios";
   let outPrint = reactive({})
 
   let isVariableTrue = false; // 初始变量状态为 false
@@ -46,17 +47,29 @@
         }else{
             ElNotification({
               title: 'Info',
-              message: '后端正在进行中',
+              message: '后端正在进行中，可能发生本地机器性能有限，或远端服务器网络延迟',
               type: 'warning',
             })
-          setTimeout(() => {
-              ElNotification({
-                title: 'Error',
-                message: '还没有编辑交互Java的代码',
-                type: 'error',
+
+          axios.post('/api/login', {
+            username: AllValue.username,
+            password: AllValue.password
+          })
+              .then(function (response) {
+                console.log(response);
+                openSuccess("back react with Java controlling MySQL")
+                cleanup()
+                loading.value = false
               })
-            loading.value = false
-          }, 2000);
+              .catch(function (error) {
+                console.log(error);
+                ElNotification({
+                  title: 'Error',
+                  message: error,
+                  type: 'error',
+                })
+                loading.value = false
+              });
         }
 
 
@@ -76,7 +89,7 @@
     // 设置变量为 true，并执行 resolve 函数
     // isVariableTrue = b
     if (b) {
-      resolveFunc()
+      resolveFunc?.()
       cleanup()
       loading.value = false
       staticValue(false)
@@ -97,7 +110,7 @@
   const executeAfterButtonClick = async () =>{
     await waitForButtonClick(); // 等待按钮点击事件
     // 按钮点击后执行的操作
-    openSuccess()
+    openSuccess("front end by Vue.js only")
     cleanup()
     loading.value = false
   }
@@ -113,10 +126,10 @@
     AllValue.check = false
   }
 
-  const openSuccess = () => {
+  const openSuccess = (val: string) => {
     ElNotification({
       title: 'Success',
-      message: 'I know this looks suck, but login success',
+      message: val +' login success',
       type: 'success',
     })
   }

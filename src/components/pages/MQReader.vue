@@ -79,7 +79,7 @@ const singleListen = () => {
           title: 'Info',
           message: '监听队列结束',
           type: 'info',
-          duration: 2000,
+          duration: 5000,
         })
       }, 25000)
       break
@@ -198,16 +198,18 @@ const removeTab = (targetName: any) => {
           </el-radio-group>
         </div>
         <el-button type="primary" size="small" @click="singleListen">队列获取</el-button>
+        <el-button type="warning" size="small">结束监听</el-button>
+        <el-button type="primary" size="small">清空窗口</el-button>
         <el-tooltip
             class="box-item"
             effect="dark"
-            content="此操作不能取消"
+            content="此操作无法撤销"
             placement="bottom"
         >
-          <el-button type="warning" size="small">清空队列</el-button>
+          <el-button type="danger" size="small">清空队列</el-button>
         </el-tooltip>
 
-        <el-button type="primary" size="small">清空窗口</el-button>
+
 
       </el-card>
     </el-col>

@@ -1,12 +1,14 @@
+
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 // 导入组件
-import FakeGPT from '~/components/pages/FakeChatGPT.vue';
-import HelloWorld from "~/components/HelloWorld.vue";
-import StudyVue from "~/components/pages/StudyVue.vue";
-import MQReader from "~/components/pages/MQReader.vue";
-import FunctionBeenAsked from "~/components/pages/FunctionBeenAsked.vue";
-import SignAndLogin from "~/components/pages/SignAndLogin.vue";
+import FakeGPT from '~/views/pages/FakeChatGPT.vue';
+import HelloWorld from "~/views/HelloWorld.vue";
+import StudyVue from "~/views/pages/StudyVue.vue";
+import MQReader from "~/views/pages/MQReader.vue";
+import FunctionBeenAsked from "~/views/pages/FunctionBeenAsked.vue";
+import SignAndLogin from "~/views/SignAndLogin.vue";
+import UserManagement from "~/views/UserManagement.vue";
 
 const routes: Array<RouteRecordRaw> = [
     { path: '/', component: HelloWorld },
@@ -23,6 +25,9 @@ const routes: Array<RouteRecordRaw> = [
         meta: { transition: 'slide-left' },
     },
     { path: '/register', component: SignAndLogin,
+        meta: { transition: 'slide-left' },
+    },
+    { path: '/UserManagement', component: UserManagement,
         meta: { transition: 'slide-left' },
     }
     // 添加其他路由规则

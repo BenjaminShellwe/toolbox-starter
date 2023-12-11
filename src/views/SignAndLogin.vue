@@ -3,7 +3,7 @@
 
   import {FormInstance,ElNotification} from "element-plus";
   import axios from "axios";
-  let outPrint = reactive({})
+  import router from "~/router";
 
   let isVariableTrue = false; // 初始变量状态为 false
   let resolveFunc = null as (() => void) | null // Promise 的 resolve 函数
@@ -113,6 +113,7 @@
     openSuccess("front end by Vue.js only")
     cleanup()
     loading.value = false
+    await router.push('/UserManagement')
   }
 
   //监听按钮

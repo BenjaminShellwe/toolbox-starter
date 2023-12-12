@@ -2,12 +2,17 @@
   import {reactive,ref} from "vue";
 
   import {FormInstance,ElNotification} from "element-plus";
+
+  import { useRegisterStore } from '~/store'
+
   import axios from "axios";
   import router from "~/router";
   import {stringify} from "qs";
 
   let isVariableTrue = false; // 初始变量状态为 false
   let resolveFunc = null as (() => void) | null // Promise 的 resolve 函数
+
+  const store = useRegisterStore()
 
   const showValue = ref(false)
   const AllValueRef = ref<FormInstance>()
@@ -125,7 +130,9 @@
     cleanup()
     loading.value = false
 
-    await router.push({ path: '/UserManagement', query: { sentUserInfo: userInfoString } })
+    store.login(sendUserInfo.id, sendUserInfo.username, sendUserInfo.role)
+    console.log(store)
+    await router.push('/UserManagement')
   }
 
   //监听按钮

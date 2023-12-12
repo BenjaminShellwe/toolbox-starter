@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia';
 
 export const useRegisterStore = defineStore({
-    id: 'auth', // 唯一的 store id
+    id: 'register', // 唯一的 store id
 
     state: () => ({
         id: '',

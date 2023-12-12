@@ -12,6 +12,7 @@ declare module 'vue' {
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElButtonGroup: typeof import('element-plus/es')['ElButtonGroup']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElCol: typeof import('element-plus/es')['ElCol']
@@ -44,15 +45,9 @@ declare module 'vue' {
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
-    FakeChatGPT: typeof import('~/views/pages/FakeChatGPT.vue')['default']
-    FunctionBeenAsked: typeof import('~/views/pages/FunctionBeenAsked.vue')['default']
-    HelloWorld: typeof import('./views/HelloWorld.vue')['default']
     Logos: typeof import('./components/Logos.vue')['default']
-    MQReader: typeof import('~/views/pages/MQReader.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SignAndLogin: typeof import('~/views/SignAndLogin.vue')['default']
-    StudyVue: typeof import('~/views/pages/StudyVue.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

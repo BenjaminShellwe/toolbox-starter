@@ -4,6 +4,7 @@
   import {FormInstance,ElNotification} from "element-plus";
   import axios from "axios";
   import router from "~/router";
+  import {stringify} from "qs";
 
   let isVariableTrue = false; // 初始变量状态为 false
   let resolveFunc = null as (() => void) | null // Promise 的 resolve 函数
@@ -18,6 +19,16 @@
       check: false
   })
 
+  const sendUserInfo = reactive({
+    id: '120703',
+    username: '2shellwe',
+    fullname: '2Benjaminshellwe',
+    gender: '00',
+    phone: '123132',
+    role: '01'
+  })
+
+  const userInfoString = stringify(sendUserInfo); // 将对象转换成字符串
 
   const rules = reactive({
     username: [
@@ -113,7 +124,8 @@
     openSuccess("front end by Vue.js only")
     cleanup()
     loading.value = false
-    await router.push('/UserManagement')
+
+    await router.push({ path: '/UserManagement', query: { sentUserInfo: userInfoString } })
   }
 
   //监听按钮

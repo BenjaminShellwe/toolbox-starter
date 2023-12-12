@@ -1,15 +1,29 @@
 // store.ts
 import { defineStore } from 'pinia';
 
-// 定义你的全局状态
-export const useStore = defineStore({
-    id: 'toolBoxStore',
+export const useRegisterStore = defineStore({
+    id: 'auth', // 唯一的 store id
+
     state: () => ({
-        message: '初始消息',
+        id: '',
+        username: '',
+        role: ''
     }),
+
     actions: {
-        updateMessage(newMessage: string) {
-            this.message = newMessage;
+        // 登录方法，用于设置用户信息
+        login(id: string, username: string, role: string) {
+            this.id = id;
+            this.username = username;
+            this.role = role;
         },
-    },
+
+        // 登出方法，用于清除用户信息
+        logout() {
+            this.id = '';
+            this.username = '';
+            this.role = '';
+        }
+    }
 });
+

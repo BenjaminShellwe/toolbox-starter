@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
   import {reactive,ref} from "vue";
 
   import {FormInstance,ElNotification} from "element-plus";
@@ -7,7 +8,6 @@
 
   import axios from "axios";
   import router from "~/router";
-  import {stringify} from "qs";
 
   let isVariableTrue = false; // 初始变量状态为 false
   let resolveFunc = null as (() => void) | null // Promise 的 resolve 函数
@@ -23,18 +23,16 @@
       module: '',
       check: false
   })
-
+  // 若验证通过将内容保存至此
   const sendUserInfo = reactive({
     id: '120703',
-    username: '2shellwe',
-    fullname: '2Benjaminshellwe',
+    username: '因为选择了前端校验',
+    fullname: '没有与后端进行交互',
     gender: '00',
     phone: '123132',
     role: '01'
   })
-
-  const userInfoString = stringify(sendUserInfo); // 将对象转换成字符串
-
+  // 输入框校验规则
   const rules = reactive({
     username: [
       { required: true, message: 'can not be empty', trigger: 'blur' },
@@ -47,6 +45,7 @@
     ]
   })
 
+  //登录校验主方法
   const submitForm = async (formEl: FormInstance | undefined) => {
     loading.value = true
     if (!formEl) return
@@ -72,10 +71,11 @@
             password: AllValue.password
           })
               .then(function (response) {
-                console.log(response);
+                // console.log(response);
                 openSuccess("back react with Java controlling MySQL")
                 cleanup()
                 loading.value = false
+                writeToStores(response.data)
               })
               .catch(function (error) {
                 console.log(error);
@@ -135,6 +135,24 @@
     await router.push('/UserManagement')
   }
 
+  // 登录成功后保存部分信息
+  const writeToStores = async (val) => {
+    store.login(
+        val.id,
+        val.username,
+        val.fullName,
+        val.password,
+        val.gender,
+        val.loginTime,
+        val.phone,
+        val.role
+    )
+    console.log(store)
+    await router.push('/UserManagement')
+  }
+  //
+
+
   //监听按钮
   const watching = async () => {
     await executeAfterButtonClick()
@@ -180,8 +198,8 @@
             </el-form-item>
             <el-form-item label="LoginModule" prop="type">
               <el-select v-model="AllValue.module" placeholder="Select type of module">
-                <el-option label="仅前端 Vue.js" value="pure" ></el-option>
-                <el-option label="走交互 Java" value="mix"></el-option>
+                <el-option label="仅前端Vue.js无数据库" value="pure" ></el-option>
+                <el-option label="走交互Java含数据库" value="mix"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="Simulated Two-Factor" prop="checkbox">

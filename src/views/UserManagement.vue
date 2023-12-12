@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import {reactive, ref, onMounted, computed, nextTick } from "vue";
 import {useRoute} from "vue-router";
-
+import { useRegisterStore } from '~/store'
 // 变量
 const route = useRoute(); // 获取路由实例
 
 const buttonName = ref("Editing")
-
-import { parse } from 'qs';
 
 interface obtainLogged {
   id: string;
@@ -78,24 +76,16 @@ onMounted(() => {
   // 组件挂载时自动调用获取数据的方法
   getVariableContinuously();
 
-  const userInfoString = route.query.sentUserInfo;
-  const sentUserInfo = parse(userInfoString);
+  const store = useRegisterStore()
   // 对未获取数据的进行处理
-  if(userInfoString != null){
-    obtainLogged.id= sentUserInfo.id
-    obtainLogged.username= sentUserInfo.username
-    obtainLogged.fullname= sentUserInfo.fullname
-    obtainLogged.gender= sentUserInfo.gender
-    obtainLogged.phone= sentUserInfo.phone
-    obtainLogged.role= sentUserInfo.role
-  }
+    obtainLogged.id= store.id
+    obtainLogged.username= store.username
+    obtainLogged.fullname= store.fullname
+    obtainLogged.gender= store.gender
+    obtainLogged.phone= store.phone
+    obtainLogged.role= store.role
 
   //登录后将信息修改为已登录的用户信息
-
-
-  console.log(sentUserInfo)
-
-
 
   nextTick(() => {
     // 在这里调用需要在所有子组件加载完成后执行的函数

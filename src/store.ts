@@ -7,14 +7,24 @@ export const useRegisterStore = defineStore({
     state: () => ({
         id: '',
         username: '',
-        role: ''
+        role: '',
+        fullname: '',
+        gender: '',
+        loginTime: '',
+        password: '',
+        phone: ''
     }),
 
     actions: {
         // 登录方法，用于设置用户信息
-        login(id: string, username: string, role: string) {
+        login(id: string, username: string, fullname: string, password: string, gender: string, loginTime: string, phone: string, role: string) {
             this.id = id;
             this.username = username;
+            this.fullname = fullname;
+            this.password = password;
+            this.gender = gender;
+            this.loginTime = loginTime;
+            this.phone = phone;
             this.role = role;
         },
 
@@ -23,7 +33,11 @@ export const useRegisterStore = defineStore({
             this.id = '';
             this.username = '';
             this.role = '';
+            this.fullname = '';
+            this.gender = '';
+            this.loginTime = '';
+            this.password = '';
+            this.phone = '';
         }
     }
 });
-

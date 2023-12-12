@@ -23,7 +23,7 @@ export default defineConfig({
     port: 82,
     proxy: {
       '/api': {
-        target: 'http://shellwe.top:8086/', // 后端服务器地址
+        target: 'http://localhost:8080/', // 后端服务器地址
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''), // 可选，如果后端API的路径与前端不匹配，可以进行重写
       },

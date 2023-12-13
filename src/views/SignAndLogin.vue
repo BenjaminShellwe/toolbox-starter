@@ -130,22 +130,34 @@
     cleanup()
     loading.value = false
 
-    store.login(sendUserInfo.id, sendUserInfo.username, sendUserInfo.role)
+    // store.login(sendUserInfo.id, sendUserInfo.username, sendUserInfo.role)
     console.log(store)
     await router.push('/UserManagement')
   }
 
   // 登录成功后保存部分信息
-  const writeToStores = async (val) => {
+  const writeToStores = async (val: any) => {
+    //后端忘记上传了，用预设的数据
+    // store.login(
+    //     val.id,
+    //     val.username,
+    //     val.fullName,
+    //     val.password,
+    //     val.gender,
+    //     val.loginTime,
+    //     val.phone,
+    //     val.role
+    // )
+
     store.login(
-        val.id,
-        val.username,
-        val.fullName,
-        val.password,
-        val.gender,
-        val.loginTime,
-        val.phone,
-        val.role
+        "120701",
+        "shellwe",
+        "Benjaminshellwe",
+        "shellwe",
+        "1",
+        "val.loginTime",
+        "123123123123",
+        "00"
     )
     console.log(store)
     await router.push('/UserManagement')
@@ -234,8 +246,8 @@
 <style scoped>
 .centered-card {
   display: flex;
-  justify-content: center; /* 水平居中 */
-  align-items: center; /* 垂直居中 */
-  height: 85vh; /* 设置容器高度，使卡片垂直居中 */
+  justify-content: center;
+  align-items: center;
+  height: 85vh;
 }
 </style>

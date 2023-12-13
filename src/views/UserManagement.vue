@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import {reactive, ref, onMounted, computed, nextTick } from "vue";
-import {useRoute} from "vue-router";
-import { useRegisterStore } from '~/store'
+import {computed, nextTick, onMounted, reactive, ref} from "vue";
+
+import {useRegisterStore} from '~/store'
 // 变量
-const route = useRoute(); // 获取路由实例
+let maxNumber: number = 0
 
 const buttonName = ref("Editing")
 
@@ -19,20 +19,39 @@ interface obtainLogged {
 const userInfoTableData:obtainLogged[] = reactive([])
 
 const obtainLogged = reactive({
-  id: '0120701',
+  id: '123456',
   username: 'default data1',
   fullname: 'default',
   gender: '00',
-  phone: '0123132',
+  phone: '0123456',
   role: '00'
 })
-const obtainDatabaseUserInfo = reactive({
-  id: '0120702',
-  username: 'default data2',
-  fullname: 'default',
-  gender: '00',
-  phone: '123132',
-  role: '01'
+const obtainDatabaseUserInfo: {[index: string]:any} = reactive({
+  object1: {
+    id: '120712',
+    username: 'default data2',
+    fullname: 'default',
+    gender: '00',
+    phone: '123132',
+    role: '01'
+  },
+  object2: {
+    id: '120722',
+    username: 'default data2',
+    fullname: 'default',
+    gender: '00',
+    phone: '123132',
+    role: '01'
+  },
+  object3: {
+    id: '120732',
+    username: 'default data2',
+    fullname: 'default',
+    gender: '00',
+    phone: '123132',
+    role: '01'
+  }
+
 })
 const UserInfoChanged = ref(false)
 const BatchInfoChanged = ref(false)
@@ -52,10 +71,81 @@ const isUserInfoChanged = () => {
 const getVariableContinuously = () => {
   // 00角色其实可以去除，进插入其他非00的记录入数组
   userInfoTableData.splice(userInfoTableData.length, 0, obtainLogged);
-  userInfoTableData.splice(userInfoTableData.length, 0, obtainDatabaseUserInfo);
+
+
+  for (let key in obtainDatabaseUserInfo) {
+    if (Object.prototype.hasOwnProperty.call(obtainDatabaseUserInfo, key)) {
+      userInfoTableData.splice(userInfoTableData.length, 0, obtainDatabaseUserInfo[key]);
+    }
+  }
+
   // console.log(userInfoTableData)
 }
+const removeInfo = (index: string) => {
+  for (const key in userInfoTableData) {
+    // console.log(userInfoTableData[key].id)
+    if (userInfoTableData[key].id == index){
+      delete userInfoTableData[key];
+      console.log(userInfoTableData)
+      break; // 找到并删除后跳出循环
+    }
+  }
+}
 
+const addUserInfo = () => {
+  const n: number = fetchMaxId(userInfoTableData)
+  // console.log(n)
+  if(n != -1){
+    userInfoTableData.push({
+      fullname: "",
+      gender: "",
+      id: n.toString(),
+      phone: "",
+      role: "01",
+      username: "",
+    })
+  }else{
+    userInfoTableData.push({
+      fullname: "",
+      gender: "",
+      id: maxNumber.toString(),
+      phone: "",
+      role: "01",
+      username: "",
+    })
+    maxNumber++
+  }
+
+  console.log(userInfoTableData)
+  const parent = document.querySelector('#table')
+  parent.scrollTo({
+    top: 100,
+    behavior: 'smooth'
+  })
+}
+
+//辅助函数用于创建新数据时id的自增
+const fetchMaxId = (val: any) => {
+  let a: number[] = []
+
+  for (const key in val) {
+    // console.log(val[key].id)
+    let n: number = val[key].id
+    a.push(n)
+  }
+  // 对数组进行排序
+  a.sort((a, b) => a - b) // 升序排序 其底层原理是快排的一种
+
+  // 获取排序后数组的最后一个元素，即最大值
+  if(maxNumber < Number(a[a.length - 1])){
+    maxNumber = Number(a[a.length - 1])
+    return Number(a[a.length - 1]) + 1 // 返回最大值+1得到
+  }
+  else{
+    return -1
+  }
+
+};
 const handleBatchInfoChanged = (id: string) => {
   const currentValue = editMap.value.get(id) ?? false;
   editMap.value.set(id, !currentValue);
@@ -71,6 +161,7 @@ const handleBatchInfoConfirm = (id: string) => {
 const isAdminPermission = computed(() => {
   return obtainLogged.role == '00';
 })
+
 
 onMounted(() => {
   // 组件挂载时自动调用获取数据的方法
@@ -166,58 +257,62 @@ onMounted(() => {
 
     <el-divider />
     <div v-if="isAdminPermission" >
-      <h4>
-        All User Management
-      </h4>
-      <el-table :data="userInfoTableData" height="250" style="width: 100%">
-        <el-table-column prop="id" label="Index" width="180">
-          <template #default="{ row }">
-            <span v-show="!editMap.get(row.id)" >{{ row.id }}</span>
-            <el-input v-show="editMap.get(row.id)" v-model="row.id" placeholder="id" disabled />
-          </template>
+
+      <el-table id="table" :data="userInfoTableData" max-height="470" style="width: 100%">
+        <el-table-column label="All User Management">
+          <el-table-column prop="id" label="Index" width="180">
+            <template #default="{ row }">
+              <span v-show="!editMap.get(row.id)" >{{ row.id }}</span>
+              <el-input v-show="editMap.get(row.id)" v-model="row.id" placeholder="id" disabled />
+            </template>
+          </el-table-column>
+          <el-table-column prop="username" label="User Name">
+            <template #default="{ row }">
+              <span v-show="!editMap.get(row.id)" >{{ row.username }}</span>
+              <el-input v-show="editMap.get(row.id)" v-model="row.username" placeholder="username" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="fullname" label="Full Name">
+            <template #default="{ row }">
+              <span v-show="!editMap.get(row.id)" >{{ row.fullname }}</span>
+              <el-input v-show="editMap.get(row.id)" v-model="row.fullname" placeholder="username" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="gender" label="Gender">
+            <template #default="{ row }">
+              <span v-show="!editMap.get(row.id)" >{{ row.gender }}</span>
+              <el-input v-show="editMap.get(row.id)" v-model="row.gender" placeholder="username" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="phone" label="Phone">
+            <template #default="{ row }">
+              <span v-show="!editMap.get(row.id)" >{{ row.phone }}</span>
+              <el-input v-show="editMap.get(row.id)" v-model="row.phone" placeholder="username" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="role" label="Role">
+            <template #default="{ row }">
+              <span v-show="!editMap.get(row.id)" >{{ row.role }}</span>
+              <el-input v-show="editMap.get(row.id)" v-model="row.role" placeholder="username" disabled />
+            </template>
+          </el-table-column>
         </el-table-column>
-        <el-table-column prop="username" label="User Name">
-          <template #default="{ row }">
-            <span v-show="!editMap.get(row.id)" >{{ row.username }}</span>
-            <el-input v-show="editMap.get(row.id)" v-model="row.username" placeholder="username" />
+        <el-table-column fixed="right"  width="180">
+          <template #header>
+            <el-button line @click="addUserInfo" size="large">添加用户</el-button>
           </template>
-        </el-table-column>
-        <el-table-column prop="fullname" label="Full Name">
-          <template #default="{ row }">
-            <span v-show="!editMap.get(row.id)" >{{ row.fullname }}</span>
-            <el-input v-show="editMap.get(row.id)" v-model="row.fullname" placeholder="username" />
-          </template>
-        </el-table-column>
-        <el-table-column prop="gender" label="Gender">
-          <template #default="{ row }">
-            <span v-show="!editMap.get(row.id)" >{{ row.gender }}</span>
-            <el-input v-show="editMap.get(row.id)" v-model="row.gender" placeholder="username" />
-          </template>
-        </el-table-column>
-        <el-table-column prop="phone" label="Phone">
-          <template #default="{ row }">
-            <span v-show="!editMap.get(row.id)" >{{ row.phone }}</span>
-            <el-input v-show="editMap.get(row.id)" v-model="row.phone" placeholder="username" />
-          </template>
-        </el-table-column>
-        <el-table-column prop="role" label="Role">
-          <template #default="{ row }">
-            <span v-show="!editMap.get(row.id)" >{{ row.role }}</span>
-            <el-input v-show="editMap.get(row.id)" v-model="row.role" placeholder="username" disabled />
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="Operations" width="180">
           <template #default="{ row }">
             <el-button v-show="!editMap.get(row.id)" type="primary" size="default" @click="handleBatchInfoChanged(row.id)"
             >Edit</el-button
             >
             <el-button-group v-show="editMap.get(row.id)" size="small">
               <el-button type="primary" @click="handleBatchInfoConfirm(row.id)">confirm</el-button>
-              <el-button type="danger">delete</el-button>
+              <el-button type="danger" @click="removeInfo(row.id)">delete</el-button>
             </el-button-group>
           </template>
         </el-table-column>
       </el-table>
+      <el-divider />
     </div>
 
 

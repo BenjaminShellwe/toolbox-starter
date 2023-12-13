@@ -2,6 +2,8 @@
 import {computed, nextTick, onMounted, reactive, ref} from "vue";
 
 import {useRegisterStore} from '~/store'
+import axios from "axios";
+import {ElNotification} from "element-plus";
 // 变量
 let maxNumber: number = 0
 
@@ -17,11 +19,13 @@ interface obtainLogged {
 }
 
 const userInfoTableData:obtainLogged[] = reactive([])
+const originData = ref()
 
+const table = ref()
 const obtainLogged = reactive({
   id: '123456',
-  username: 'default data1',
-  fullname: 'default',
+  username: '如果展示了这个数据',
+  fullname: '那么说明没有走交互',
   gender: '00',
   phone: '0123456',
   role: '00'
@@ -57,7 +61,7 @@ const UserInfoChanged = ref(false)
 const BatchInfoChanged = ref(false)
 
 const editMap = ref(new Map<string, boolean>());
-ref();
+
 // 函数
 const isUserInfoChanged = () => {
   UserInfoChanged.value = !UserInfoChanged.value
@@ -67,20 +71,27 @@ const isUserInfoChanged = () => {
     buttonName.value = "Editing"
   }
 }
-
+// 前端获取表格数据
 const getVariableContinuously = () => {
-  // 00角色其实可以去除，进插入其他非00的记录入数组
-  userInfoTableData.splice(userInfoTableData.length, 0, obtainLogged);
 
-
-  for (let key in obtainDatabaseUserInfo) {
-    if (Object.prototype.hasOwnProperty.call(obtainDatabaseUserInfo, key)) {
-      userInfoTableData.splice(userInfoTableData.length, 0, obtainDatabaseUserInfo[key]);
-    }
-  }
-
+  axios.post('/api/fetch', {
+  })
+      .then(function (response) {
+        // console.log(response.data);
+        for (let key in response.data) {
+          if (Object.prototype.hasOwnProperty.call(response.data, key)) {
+            userInfoTableData.splice(userInfoTableData.length, 0, response.data[key]);
+          }
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  // 00角色去除所以注释，已进插入其他非00的记录入数组
+  // userInfoTableData.splice(userInfoTableData.length, 0, obtainLogged);
   // console.log(userInfoTableData)
 }
+// 前端删除用户操作
 const removeInfo = (index: string) => {
   for (const key in userInfoTableData) {
     // console.log(userInfoTableData[key].id)
@@ -91,37 +102,41 @@ const removeInfo = (index: string) => {
     }
   }
 }
-
+//前端添加用户操作
 const addUserInfo = () => {
   const n: number = fetchMaxId(userInfoTableData)
   // console.log(n)
   if(n != -1){
     userInfoTableData.push({
-      fullname: "",
-      gender: "",
+      fullname: "编辑后确认",
+      gender: "写入数据库",
       id: n.toString(),
-      phone: "",
+      phone: "删除则抛弃",
       role: "01",
-      username: "",
+      username: "请点击编辑",
     })
+    maxNumber++
   }else{
     userInfoTableData.push({
-      fullname: "",
-      gender: "",
+      fullname: "编辑后确认",
+      gender: "写入数据库",
       id: maxNumber.toString(),
-      phone: "",
+      phone: "删除则抛弃",
       role: "01",
-      username: "",
+      username: "请点击编辑",
     })
     maxNumber++
   }
+  // console.log(table.value)
 
-  console.log(userInfoTableData)
-  const parent = document.querySelector('#table')
-  parent.scrollTo({
-    top: 100,
-    behavior: 'smooth'
-  })
+  nextTick(() => {
+    const tableBody = document.querySelector('.ep-table__body');
+    if (tableBody) {
+      const bodyHeight = tableBody.clientHeight;
+      // console.log('表格体高度:', bodyHeight);
+      table.value.scrollTo(0,bodyHeight)
+    }
+  });
 }
 
 //辅助函数用于创建新数据时id的自增
@@ -150,13 +165,68 @@ const handleBatchInfoChanged = (id: string) => {
   const currentValue = editMap.value.get(id) ?? false;
   editMap.value.set(id, !currentValue);
   BatchInfoChanged.value = !BatchInfoChanged.value
+
+  const index = userInfoTableData.findIndex(obj => obj.id === id)
+  originData.value = userInfoTableData[index]
+
 }
 
 const handleBatchInfoConfirm = (id: string) => {
   const currentValue = editMap.value.get(id) ?? false;
   editMap.value.set(id, !currentValue);
   BatchInfoChanged.value = !BatchInfoChanged.value
+  const index = userInfoTableData.findIndex(obj => obj.id === id)
+  console.log(id)
+  console.log(maxNumber)
+  if(Number(id) !== maxNumber){
+
+    axios.post('/api/update',{
+      fullname: userInfoTableData[index].fullname,
+      gender: userInfoTableData[index].gender,
+      id: userInfoTableData[index].id,
+      phone: userInfoTableData[index].phone,
+      role: userInfoTableData[index].role,
+      username: userInfoTableData[index].username
+    }
+    )
+        .then(function (response) {
+          console.log(response);
+          for (let key in response.data) {
+            if (Object.prototype.hasOwnProperty.call(response.data, key)) {
+              userInfoTableData.splice(userInfoTableData.length, 0, response.data[key]);
+            }
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+  }else{
+    let sendingData = {}
+    sendingData = userInfoTableData[index]
+    console.log(sendingData)
+    axios.post('/api/insert', {
+          fullname: userInfoTableData[index].fullname,
+          gender: userInfoTableData[index].gender,
+          id: userInfoTableData[index].id,
+          phone: userInfoTableData[index].phone,
+          role: userInfoTableData[index].role,
+          username: userInfoTableData[index].username
+    }
+    )
+        .then(function (response) {
+          console.log(response);
+          for (let key in response.data) {
+            if (Object.prototype.hasOwnProperty.call(response.data, key)) {
+              userInfoTableData.splice(userInfoTableData.length, 0, response.data[key]);
+            }
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+  }
 }
+
 
 const isAdminPermission = computed(() => {
   return obtainLogged.role == '00';
@@ -166,7 +236,8 @@ const isAdminPermission = computed(() => {
 onMounted(() => {
   // 组件挂载时自动调用获取数据的方法
   getVariableContinuously();
-
+  fetchMaxId(userInfoTableData)
+//登录后将信息修改为已登录的用户信息
   const store = useRegisterStore()
   // 对未获取数据的进行处理
     obtainLogged.id= store.id
@@ -175,8 +246,6 @@ onMounted(() => {
     obtainLogged.gender= store.gender
     obtainLogged.phone= store.phone
     obtainLogged.role= store.role
-
-  //登录后将信息修改为已登录的用户信息
 
   nextTick(() => {
     // 在这里调用需要在所有子组件加载完成后执行的函数
@@ -258,7 +327,7 @@ onMounted(() => {
     <el-divider />
     <div v-if="isAdminPermission" >
 
-      <el-table id="table" :data="userInfoTableData" max-height="470" style="width: 100%">
+      <el-table ref="table" :data="userInfoTableData" max-height="470" style="width: 100%">
         <el-table-column label="All User Management">
           <el-table-column prop="id" label="Index" width="180">
             <template #default="{ row }">
@@ -269,31 +338,31 @@ onMounted(() => {
           <el-table-column prop="username" label="User Name">
             <template #default="{ row }">
               <span v-show="!editMap.get(row.id)" >{{ row.username }}</span>
-              <el-input v-show="editMap.get(row.id)" v-model="row.username" placeholder="username" />
+              <el-input v-show="editMap.get(row.id)" v-model="row.username" placeholder="row.username" />
             </template>
           </el-table-column>
           <el-table-column prop="fullname" label="Full Name">
             <template #default="{ row }">
               <span v-show="!editMap.get(row.id)" >{{ row.fullname }}</span>
-              <el-input v-show="editMap.get(row.id)" v-model="row.fullname" placeholder="username" />
+              <el-input v-show="editMap.get(row.id)" v-model="row.fullname" placeholder="row.fullname" />
             </template>
           </el-table-column>
           <el-table-column prop="gender" label="Gender">
             <template #default="{ row }">
               <span v-show="!editMap.get(row.id)" >{{ row.gender }}</span>
-              <el-input v-show="editMap.get(row.id)" v-model="row.gender" placeholder="username" />
+              <el-input v-show="editMap.get(row.id)" v-model="row.gender" placeholder="row.gender" />
             </template>
           </el-table-column>
           <el-table-column prop="phone" label="Phone">
             <template #default="{ row }">
               <span v-show="!editMap.get(row.id)" >{{ row.phone }}</span>
-              <el-input v-show="editMap.get(row.id)" v-model="row.phone" placeholder="username" />
+              <el-input v-show="editMap.get(row.id)" v-model="row.phone" placeholder="row.phone" />
             </template>
           </el-table-column>
           <el-table-column prop="role" label="Role">
             <template #default="{ row }">
               <span v-show="!editMap.get(row.id)" >{{ row.role }}</span>
-              <el-input v-show="editMap.get(row.id)" v-model="row.role" placeholder="username" disabled />
+              <el-input v-show="editMap.get(row.id)" v-model="row.role" placeholder="row.role" disabled />
             </template>
           </el-table-column>
         </el-table-column>

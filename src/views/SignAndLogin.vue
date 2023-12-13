@@ -70,22 +70,22 @@
             username: AllValue.username,
             password: AllValue.password
           })
-              .then(function (response) {
-                // console.log(response);
-                openSuccess("back react with Java controlling MySQL")
-                cleanup()
-                loading.value = false
-                writeToStores(response.data)
-              })
-              .catch(function (error) {
-                console.log(error);
-                ElNotification({
-                  title: 'Error',
-                  message: error,
-                  type: 'error',
-                })
-                loading.value = false
-              });
+          .then(function (response) {
+            // console.log(response);
+            openSuccess("back react with Java controlling MySQL")
+            cleanup()
+            loading.value = false
+            writeToStores(response.data)
+          })
+          .catch(function (error) {
+            console.log(error);
+            ElNotification({
+              title: 'Error',
+              message: error,
+              type: 'error',
+            })
+            loading.value = false
+          });
         }
 
 
@@ -137,28 +137,28 @@
 
   // 登录成功后保存部分信息
   const writeToStores = async (val: any) => {
-    //后端忘记上传了，用预设的数据
-    // store.login(
-    //     val.id,
-    //     val.username,
-    //     val.fullName,
-    //     val.password,
-    //     val.gender,
-    //     val.loginTime,
-    //     val.phone,
-    //     val.role
-    // )
-
+    // 后端忘记上传了，用预设的数据
     store.login(
-        "120701",
-        "shellwe",
-        "Benjaminshellwe",
-        "shellwe",
-        "1",
-        "val.loginTime",
-        "123123123123",
-        "00"
+        val.id,
+        val.username,
+        val.fullname,
+        val.password,
+        val.gender,
+        val.loginTime,
+        val.phone,
+        val.role
     )
+
+    // store.login(
+    //     "120701",
+    //     "shellwe",
+    //     "Benjaminshellwe",
+    //     "shellwe",
+    //     "1",
+    //     "val.loginTime",
+    //     "123123123123",
+    //     "00"
+    // )
     console.log(store)
     await router.push('/UserManagement')
   }

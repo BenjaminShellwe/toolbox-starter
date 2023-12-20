@@ -8,7 +8,7 @@ import StudyVue from "~/views/pages/StudyVue.vue";
 import MQReader from "~/views/pages/MQReader.vue";
 import FunctionBeenAsked from "~/views/pages/FunctionBeenAsked.vue";
 import SignAndLogin from "~/views/SignAndLogin.vue";
-import UserManagement from "~/views/UserManagement.vue";
+import UserManagement from "~/views/SystemMaintenance/UserManagement.vue";
 
 const routes: Array<RouteRecordRaw> = [
     { path: '/', component: HelloWorld },

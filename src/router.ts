@@ -9,6 +9,7 @@ import MQReader from "~/views/pages/MQReader.vue";
 import FunctionBeenAsked from "~/views/pages/FunctionBeenAsked.vue";
 import SignAndLogin from "~/views/SignAndLogin.vue";
 import UserManagement from "~/views/SystemMaintenance/UserManagement.vue";
+import User from "~/views/SystemMaintenance/Bank/User.vue";
 
 const routes: Array<RouteRecordRaw> = [
     { path: '/', component: HelloWorld },
@@ -28,6 +29,10 @@ const routes: Array<RouteRecordRaw> = [
         meta: { transition: 'slide-left' },
     },
     { path: '/UserManagement', component: UserManagement,
+        meta: { transition: 'slide-left' },
+    }
+    ,
+    { path: '/UserManagement2', component: User,
         meta: { transition: 'slide-left' },
     }
     // 添加其他路由规则

@@ -9,7 +9,7 @@
   import axios from "axios";
   import router from "~/router";
 
-  let isVariableTrue = false; // 初始变量状态为 false
+
   let resolveFunc = null as (() => void) | null // Promise 的 resolve 函数
 
   const store = useRegisterStore()
@@ -47,6 +47,10 @@
 
   //登录校验主方法
   const submitForm = async (formEl: FormInstance | undefined) => {
+    if(AllValue.module == ''){
+      AllValue.module = "mix"
+      console.log(AllValue.module)
+    }
     loading.value = true
     if (!formEl) return
     await formEl.validate((valid, fields) => {
@@ -103,7 +107,6 @@
   }
   const handleClick = (b: boolean) => {
     // 设置变量为 true，并执行 resolve 函数
-    // isVariableTrue = b
     if (b) {
       resolveFunc?.()
       cleanup()
@@ -195,28 +198,26 @@
 
 <template>
   <el-row>
-    <el-col :span="12"
+    <el-col
             class="centered-card">
       <el-card
           style="height: 300px;width: 300px;"
       >
         <div class="login-form" v-loading="loading">
           <el-form :model="AllValue" :rules="rules" ref="AllValueRef" size="small">
-            <el-form-item label="UserName" prop="username">
+            <el-form-item label="用户" prop="username">
               <el-input v-model="AllValue.username" placeholder="setup before login" />
             </el-form-item>
-            <el-form-item label="PassWord" prop="password">
+            <el-form-item label="密码" prop="password">
               <el-input type="password" v-model="AllValue.password" placeholder="setup before login"></el-input>
             </el-form-item>
-            <el-form-item label="LoginModule" prop="type">
-              <el-select v-model="AllValue.module" placeholder="Select type of module">
+            <el-form-item label="交互方式" prop="type">
+              <el-select v-model="AllValue.module" placeholder="默认前后端交互">
                 <el-option label="仅前端Vue.js无数据库" value="pure" ></el-option>
                 <el-option label="走交互Java含数据库" value="mix"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="Simulated Two-Factor" prop="checkbox">
-              <el-checkbox v-model="AllValue.check">check</el-checkbox>
-            </el-form-item>
+
             <el-form-item>
               <el-button type="primary" @click="submitForm(AllValueRef)">登录</el-button>
             </el-form-item>
@@ -224,23 +225,30 @@
         </div>
       </el-card>
     </el-col>
-    <el-col :span="12">
-      <el-card>
-          <p v-show="showValue">
-            就先不模拟加密过程和数据库读写<br>
-            将机械验证的过程换成人为的手动<br>
-            登录请求为<br>
-            用户：{{ AllValue.username }}<br>
-            密码：{{ AllValue.password }}<br>
-            模式：{{ AllValue.module }}<br>
-            <button @click="handleClick(true)">confirm</button>
-            <button @click="handleClick(false)">denied</button>
-          </p>
-
-
-      </el-card>
-    </el-col>
   </el-row>
+
+  <el-dialog
+      v-model="showValue"
+      title="Warning"
+      width="30%"
+      :show-close=false
+      align-center
+  >
+    选择仅前端是调试页面<br>
+    将机械验证的过程换成人为的手动<br>
+    登录请求为<br>
+    用户：{{ AllValue.username }}<br>
+    密码：{{ AllValue.password }}<br>
+    模式：{{ AllValue.module }}<br>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="handleClick(false)">Cancel</el-button>
+        <el-button type="primary" @click="handleClick(true)">
+          Confirm
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>

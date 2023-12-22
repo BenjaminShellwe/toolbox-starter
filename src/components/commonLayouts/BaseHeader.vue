@@ -1,9 +1,24 @@
 <script lang="ts" setup>
 import { toggleDark } from "~/composables";
+
+import { useRegisterStore } from '~/store'
+import router from "~/router";
+
+// store传入定义入口
+const store = useRegisterStore()
+// 登出操作
+const logoutAction = async () => {
+  store.logout()
+  await router.push('/Register2')
+}
 </script>
 
 <template>
-  <el-menu class="el-menu-demo" mode="horizontal">
+  <el-menu
+      class="el-menu-demo"
+      mode="horizontal"
+      :ellipsis="false"
+  >
     <el-menu-item index="1">
       <router-link to="/">主页</router-link>
     </el-menu-item>
@@ -39,5 +54,54 @@ import { toggleDark } from "~/composables";
         <i inline-flex i="dark:ep-moon ep-sunny" />
       </button>
     </el-menu-item>
+    <div class="flex-grow" />
+      <el-popover
+          placement="top-start"
+          :width="200"
+          trigger="hover"
+      >
+        <el-descriptions
+            title="Information"
+            direction="vertical"
+            :column="1"
+            size="small"
+            border
+        >
+          <template #extra>
+            <el-button
+                size="small"
+                type="primary"
+                @click="logoutAction"
+            >
+              logout
+            </el-button>
+          </template>
+          <el-descriptions-item label="User I.D.">
+            <el-tag size="small">{{ store.UserID }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="Login I.D.">
+            <el-tag size="small">{{ store.LoginID }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="UserName" >
+            <el-tag size="small">{{ store.UserName }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="UserType">
+            <el-tag size="small">{{ store.UserType }}</el-tag>
+          </el-descriptions-item>
+        </el-descriptions>
+
+
+        <template #reference>
+          <el-menu-item index="5">
+            USER:[{{store.UserID}}]{{store.UserName}}
+          </el-menu-item>
+        </template>
+      </el-popover>
+
+
   </el-menu>
 </template>
+
+<style>
+
+</style>

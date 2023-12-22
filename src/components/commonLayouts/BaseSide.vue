@@ -12,16 +12,18 @@
         <span>Navigator One</span>
       </template>
       <el-menu-item-group>
-        <template #title><span>Group One</span></template>
+        <template #title><span>管理界面预览</span></template>
         <el-menu-item index="1-1">
-          <router-link to="/UserManagement2" >正建设页面 金管局用户管理</router-link>
+          <router-link to="/UserManagement2" >金管局用户管理</router-link>
         </el-menu-item>
         <el-menu-item index="1-2">
-          <router-link to="/RoleManagement2" >正建设页面 金管局角色管理</router-link>
+          <router-link to="/RoleManagement2" >金管局角色管理</router-link>
         </el-menu-item>
       </el-menu-item-group>
-      <el-menu-item-group title="Group Two">
-        <el-menu-item index="1-3">建设中</el-menu-item>
+      <el-menu-item-group title="登录界面预览">
+        <el-menu-item index="1-3">
+          <router-link to="/Register2" >登录入口</router-link>
+        </el-menu-item>
       </el-menu-item-group>
       <el-sub-menu index="1-4">
         <template #title><span>item four</span></template>

@@ -2,6 +2,11 @@
 
 import {onMounted, reactive, ref} from "vue";
 
+import { useRegisterStore } from '~/store'
+
+// store传入定义入口
+const store = useRegisterStore()
+
 // 表格表头数据列接口
 interface obtainLogged {
   UserID: string,
@@ -23,6 +28,12 @@ const popoverVisible = ref({
   suspend: false,
   cancel: false
 })
+// 操作激活冻结注销单元格内按钮控制
+const unitCellVisible = ref({
+  activate: true,
+  suspend: true,
+  cancel: true
+})
 // 对话框可见性控制变量
 const centerDialogVisible = ref(false);
 // 对话框内不同显示内容可见性控制变量数组，顺序为详情、修改、授权
@@ -31,6 +42,8 @@ const dialogDetailsVisible = ref({
   edit: false,
   authorise: false
 })
+//授权界面是否可见变量
+const authoriseVisible = ref(false)
 // 对话框授权页面中含有一个穿梭框，初始化数据
 const transferValue = ref([])
 // 穿梭框，框内数据接口定义
@@ -72,6 +85,28 @@ const secondClick = (val: any) => {
   }
 }
 
+// 分页器 参数控制
+const currentPage4 = ref(4)
+const pageSize4 = ref(10)
+const small = ref(false)
+const background = ref(true)
+const disabled = ref(false)
+// 分页器 页面数量处理
+const handleSizeChange = (val: number) => {
+  console.log(`${val} items per page`)
+}
+// 分页器 当前页面处理
+const handleCurrentChange = (val: number) => {
+  console.log(`current page: ${val}`)
+}
+
+
+//判断账户类型对栏位进行修改
+const checkAccountType = () => {
+  if(store.UserType == 'manager'){
+    authoriseVisible.value = true
+  }
+}
 
 // 非生命周期函数请在以上行中声明
 // onMounted期间
@@ -86,6 +121,7 @@ onMounted(() => {
     OnlineStatus: "Online"
   }
   userInfoTableData.splice(userInfoTableData.length, 0, val)
+  checkAccountType()
 })
 </script>
 
@@ -140,7 +176,7 @@ onMounted(() => {
       <el-table-column fixed="right" label="Edit" width="55">
         <el-icon @click="oneClick('edit')" class="customStyle"><EditPen /></el-icon>
       </el-table-column>
-      <el-table-column fixed="right" label="Authorise" width="95">
+      <el-table-column v-if="authoriseVisible" fixed="right" label="Authorise" width="95">
         <el-icon @click="oneClick('authorise')" class="customStyle"><User /></el-icon>
       </el-table-column>
       <el-table-column fixed="right" label="Activate" width="90">
@@ -159,7 +195,7 @@ onMounted(() => {
             >
           </div>
           <template #reference>
-            <el-icon @click="popoverVisible.activate = true" class="customStyle"><CircleCheckFilled /></el-icon>
+            <el-icon v-show="unitCellVisible.activate" @click="popoverVisible.activate = true" class="customStyle"><CircleCheckFilled /></el-icon>
           </template>
         </el-popover>
       </el-table-column>
@@ -179,7 +215,7 @@ onMounted(() => {
             >
           </div>
           <template #reference>
-            <el-icon @click="popoverVisible.suspend = true" class="customStyle"><WarningFilled /></el-icon>
+            <el-icon v-show="unitCellVisible.suspend" @click="popoverVisible.suspend = true" class="customStyle"><WarningFilled /></el-icon>
           </template>
         </el-popover>
       </el-table-column>
@@ -199,12 +235,28 @@ onMounted(() => {
             >
           </div>
           <template #reference>
-            <el-icon @click="popoverVisible.cancel = true" class="customStyle"><CircleCloseFilled /></el-icon>
+            <el-icon v-show="unitCellVisible.cancel" @click="popoverVisible.cancel = true" class="customStyle"><CircleCloseFilled /></el-icon>
           </template>
         </el-popover>
       </el-table-column>
 
     </el-table>
+
+    <el-divider />
+    <div class="demo-pagination-block">
+      <el-pagination
+          v-model:current-page="currentPage4"
+          v-model:page-size="pageSize4"
+          :page-sizes="[10, 20, 30, 40]"
+          :small="small"
+          :disabled="disabled"
+          :background="background"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="40"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+      />
+    </div>
   </el-card>
 
   <el-dialog

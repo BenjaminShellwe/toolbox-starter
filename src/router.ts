@@ -11,6 +11,7 @@ import SignAndLogin from "~/views/SignAndLogin.vue";
 import UserManagement from "~/views/SystemMaintenance/UserManagement.vue";
 import User from "~/views/SystemMaintenance/Amcm/User.vue";
 import Role from "~/views/SystemMaintenance/Amcm/Role.vue";
+import login from "~/views/SystemMaintenance/Login.vue";
 
 const routes: Array<RouteRecordRaw> = [
     { path: '/', component: HelloWorld },
@@ -35,9 +36,11 @@ const routes: Array<RouteRecordRaw> = [
     ,
     { path: '/UserManagement2', component: User,
         meta: { transition: 'slide-left' },
-    }
-    ,
+    },
     { path: '/RoleManagement2', component: Role,
+        meta: { transition: 'slide-left' },
+    },
+    { path: '/Register2', component: login,
         meta: { transition: 'slide-left' },
     }
     // 添加其他路由规则

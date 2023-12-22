@@ -15,23 +15,15 @@
   const store = useRegisterStore()
 
   const showValue = ref(false)
-  const AllValueRef = ref<FormInstance>()
+  const loginValueRef = ref<FormInstance>()
   const loading = ref(false)
-  const AllValue = reactive({
+  const loginValue = reactive({
       username: '',
       password: '',
       module: '',
       check: false
   })
-  // 若验证通过将内容保存至此
-  const sendUserInfo = reactive({
-    id: '120703',
-    username: '因为选择了前端校验',
-    fullname: '没有与后端进行交互',
-    gender: '00',
-    phone: '123132',
-    role: '01'
-  })
+
   // 输入框校验规则
   const rules = reactive({
     username: [
@@ -47,9 +39,10 @@
 
   //登录校验主方法
   const submitForm = async (formEl: FormInstance | undefined) => {
-    if(AllValue.module == ''){
-      AllValue.module = "mix"
-      console.log(AllValue.module)
+    // 默认登录方式
+    if(loginValue.module == ''){
+      loginValue.module = "mix"
+      console.log(loginValue.module)
     }
     loading.value = true
     if (!formEl) return
@@ -57,7 +50,7 @@
       if (valid) {
         console.log('submit!')
         //走前端在这里验证
-        if(AllValue.module != 'mix'){
+        if(loginValue.module != 'mix'){
           //模拟后端校验，但是是手动确定
           staticValue(true)
           watching()
@@ -71,8 +64,8 @@
             })
 
           axios.post('/api/login', {
-            username: AllValue.username,
-            password: AllValue.password
+            username: loginValue.username,
+            password: loginValue.password
           })
           .then(function (response) {
             // console.log(response);
@@ -135,22 +128,22 @@
 
     // store.login(sendUserInfo.id, sendUserInfo.username, sendUserInfo.role)
     console.log(store)
-    await router.push('/UserManagement')
+    await router.push('/UserManagement2')
   }
 
   // 登录成功后保存部分信息
   const writeToStores = async (val: any) => {
     // 后端忘记上传了，用预设的数据
-    store.login(
-        val.id,
-        val.username,
-        val.fullname,
-        val.password,
-        val.gender,
-        val.loginTime,
-        val.phone,
-        val.role
-    )
+    // store.login(
+    //     val.id,
+    //     val.username,
+    //     val.fullname,
+    //     val.password,
+    //     val.gender,
+    //     val.loginTime,
+    //     val.phone,
+    //     val.role
+    // )
 
     // store.login(
     //     "120701",
@@ -173,10 +166,10 @@
     await executeAfterButtonClick()
   }
   const cleanup = () =>{
-    AllValue.username = ''
-    AllValue.password = ''
-    AllValue.module = ''
-    AllValue.check = false
+    loginValue.username = ''
+    loginValue.password = ''
+    loginValue.module = ''
+    loginValue.check = false
   }
 
   const openSuccess = (val: string) => {
@@ -204,22 +197,22 @@
           style="height: 300px;width: 300px;"
       >
         <div class="login-form" v-loading="loading">
-          <el-form :model="AllValue" :rules="rules" ref="AllValueRef" size="small">
+          <el-form :model="loginValue" :rules="rules" ref="loginValueRef" size="small">
             <el-form-item label="用户" prop="username">
-              <el-input v-model="AllValue.username" placeholder="setup before login" />
+              <el-input v-model="loginValue.username" placeholder="setup before login" />
             </el-form-item>
             <el-form-item label="密码" prop="password">
-              <el-input type="password" v-model="AllValue.password" placeholder="setup before login"></el-input>
+              <el-input type="password" v-model="loginValue.password" placeholder="setup before login"></el-input>
             </el-form-item>
             <el-form-item label="交互方式" prop="type">
-              <el-select v-model="AllValue.module" placeholder="默认前后端交互">
+              <el-select v-model="loginValue.module" placeholder="默认前后端交互">
                 <el-option label="仅前端Vue.js无数据库" value="pure" ></el-option>
                 <el-option label="走交互Java含数据库" value="mix"></el-option>
               </el-select>
             </el-form-item>
 
             <el-form-item>
-              <el-button type="primary" @click="submitForm(AllValueRef)">登录</el-button>
+              <el-button type="primary" @click="submitForm(loginValueRef)">登录</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -237,9 +230,9 @@
     选择仅前端是调试页面<br>
     将机械验证的过程换成人为的手动<br>
     登录请求为<br>
-    用户：{{ AllValue.username }}<br>
-    密码：{{ AllValue.password }}<br>
-    模式：{{ AllValue.module }}<br>
+    用户：{{ loginValue.username }}<br>
+    密码：{{ loginValue.password }}<br>
+    模式：{{ loginValue.module }}<br>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="handleClick(false)">Cancel</el-button>

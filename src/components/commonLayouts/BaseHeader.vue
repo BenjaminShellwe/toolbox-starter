@@ -3,7 +3,9 @@ import { toggleDark } from "~/composables";
 
 import { useRegisterStore } from '~/store'
 import router from "~/router";
-
+import {ref, watch} from "vue";
+// 用户信息菜单可见变量
+const menuVisible = ref(false)
 // store传入定义入口
 const store = useRegisterStore()
 // 登出操作
@@ -11,6 +13,12 @@ const logoutAction = async () => {
   store.logout()
   await router.push('/Register2')
 }
+// 监听变量变化的变化，并在其变更后执行对应的方法
+watch(store, () => {
+  menuVisible.value = store.LoginID != '';
+  // console.log(menuVisible.value);
+});
+
 </script>
 
 <template>
@@ -49,13 +57,13 @@ const logoutAction = async () => {
     <el-menu-item h="full" @click="toggleDark()">
       <button
         class="border-none w-full bg-transparent cursor-pointer"
-        style="height: var(--ep-menu-item-height)"
+        style="/*noinspection CssUnresolvedCustomProperty*/height: var(--ep-menu-item-height)"
       >
         <i inline-flex i="dark:ep-moon ep-sunny" />
       </button>
     </el-menu-item>
     <div class="flex-grow" />
-      <el-popover
+    <el-popover
           placement="top-start"
           :width="200"
           trigger="hover"
@@ -92,7 +100,7 @@ const logoutAction = async () => {
 
 
         <template #reference>
-          <el-menu-item index="5">
+          <el-menu-item v-show="menuVisible" index="5">
             USER:[{{store.UserID}}]{{store.UserName}}
           </el-menu-item>
         </template>

@@ -33,11 +33,13 @@
 </template>
 
 <style>
+/*noinspection ALL*/
 #app {
   text-align: center;
   color: var(--ep-text-color-primary);
 }
 
+/*noinspection ALL*/
 .main-container {
   height: calc(100vh - var(--ep-menu-item-height) - 3px);
 }

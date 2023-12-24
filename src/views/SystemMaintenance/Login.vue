@@ -45,7 +45,7 @@
   const handleClick = async(b: boolean) => {
     if(b){
       await writeToStores(2, loginValue)
-      console.log(store)
+      // console.log(store)
       await router.push('/UserManagement2')
     }else{
       ElNotification({
@@ -128,7 +128,7 @@
           'online'
       )
     }
-    console.log(store)
+    // console.log(store)
   }
 
 </script>

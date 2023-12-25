@@ -120,7 +120,7 @@
           '2001',
           val.LoginID,
           'defaultName',
-          'admin'
+          'manager'
       )
       store.filled(
           'all',

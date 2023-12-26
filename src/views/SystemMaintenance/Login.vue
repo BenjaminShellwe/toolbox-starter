@@ -7,6 +7,7 @@
   import { useRegisterStore } from '~/store'
 
   import router from "~/router";
+  import axios from "axios";
 
   // 仅前端登录校验对话框窗体
   const dialogVisible = ref(false)
@@ -29,12 +30,12 @@
   const rules = reactive({
     LoginID: [
       { required: true, message: 'can not be empty', trigger: 'blur' },
-      { min: 6, max: 10, message: 'Length: 6 to 10 Characters', trigger: 'blur' },
+      { min: 3, max: 10, message: 'Length: 6 to 10 Characters', trigger: 'blur' },
 
     ],
     password: [
       { required: true, message: 'can not be empty', trigger: 'blur' },
-      { min: 6, max: 12, message: 'Length: 6 to 12 Characters', trigger: 'blur' },
+      { min: 3, max: 12, message: 'Length: 6 to 12 Characters', trigger: 'blur' },
     ]
   })
 
@@ -78,10 +79,36 @@
         }else{
           ElNotification({
             title: 'info',
-            message: '后端登录制作中',
+            message: '后端登录中',
             type: 'info',
           })
-          handleFollowingSteps()
+          axios.post('/api/loginAction', {
+            user_LOGIN_ID: loginValue.LoginID,
+            user_PASS: loginValue.password
+          }).then(async function (response) {
+            // console.log(response)
+            ElNotification({
+              title: 'Success',
+              message: 'login success',
+              type: 'success',
+            })
+            store.login(
+                response.data.user_ID,
+                response.data.user_LOGIN_ID,
+                response.data.user_NAME,
+                response.data.user_TYPE
+            )
+            await router.push('/UserManagement2')
+            handleFollowingSteps()
+          }).catch(function(response){
+            console.log(response)
+            handleFollowingSteps()
+            ElNotification({
+              title: 'Warning',
+              message: '账户密码有误',
+              type: 'warning',
+            })
+          })
         }
 
 

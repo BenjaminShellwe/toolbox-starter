@@ -20,9 +20,9 @@
           <router-link to="/RoleManagement2" >金管局角色管理</router-link>
         </el-menu-item>
       </el-menu-item-group>
-      <el-menu-item-group title="登录界面预览">
+      <el-menu-item-group title="建设中">
         <el-menu-item index="1-3">
-          <router-link to="/Register2" >登录入口</router-link>
+          建设中
         </el-menu-item>
       </el-menu-item-group>
       <el-sub-menu index="1-4">
@@ -33,7 +33,9 @@
     <el-menu-item index="2">
       <el-icon><icon-menu /></el-icon>
       <template #title>
-        建设中
+        <router-link to="/Register2" >
+        登录入口
+        </router-link>
       </template>
     </el-menu-item>
     <el-menu-item index="3" disabled>

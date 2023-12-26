@@ -4,6 +4,7 @@ import { toggleDark } from "~/composables";
 import { useRegisterStore } from '~/store'
 import router from "~/router";
 import {ref, watch} from "vue";
+import axios from "axios";
 // 用户信息菜单可见变量
 const menuVisible = ref(false)
 // store传入定义入口
@@ -11,7 +12,15 @@ const store = useRegisterStore()
 // 登出操作
 const logoutAction = async () => {
   store.logout()
-  await router.push('/Register2')
+  axios.post('/api/updateOnlineState',{
+    user_ID: store.UserID,
+    online_STATE: store.OnlineStatus
+  }).then(async function () {
+    await router.push('/Register2')
+  }).then(function (response){
+    console.log(response)
+  })
+
 }
 // 监听变量变化的变化，并在其变更后执行对应的方法
 watch(store, () => {

@@ -6,6 +6,7 @@ import { useRegisterStore } from '~/store'
 import axios from "axios";
 import {AddLocation} from "@element-plus/icons-vue";
 import {ElNotification} from "element-plus";
+import router from "~/router";
 
 // store传入定义入口
 const store = useRegisterStore()
@@ -71,13 +72,21 @@ interface Option {
 // 生成穿梭框内数据
 const generateData = () => {
   const data: Option[] = []
-  for (let i = 1; i <= 15; i++) {
-    data.push({
-      key: i,
-      label: `Option ${i}`,
-      disabled: i % 4 === 0,
-    })
-  }
+  axios.post('api/allRole', {
+
+  }).then(function (response){
+    // console.log(response.data)
+    for (let i = 1; i <= response.data.length; i++) {
+      data.push({
+        key: i,
+        label: response.data[i].role_ID,
+        disabled: response.data[i].role_TYPE == '0',
+      })
+    }
+  }).catch(function (response) {
+    console.log(response)
+  })
+
   return data
 }
 // 穿梭框，初始化框内数据
@@ -95,7 +104,6 @@ const addUser = ref({
   REMARK: ''
 })
 // 搜索变量
-const search1 = ref('')
 const search2 = ref('')
 
 const filterTableData = computed(() =>
@@ -381,7 +389,7 @@ const handleCurrentChange = (val: number) => {
 
 //判断账户类型对栏位进行修改
 const checkAccountType = () => {
-  if(store.UserType == 'manager'){
+  if(store.UserType == '2'){
     authoriseVisible.value = true
   }
 }
@@ -484,7 +492,7 @@ const getAllUsersInfo = () => {
 
 // 非生命周期函数请在以上行中声明
 // onMounted期间
-onMounted(() => {
+onMounted(async () => {
   getAllUsersInfo()
   // const val = {
   //   UserID: "rtgs_manager_02",
@@ -497,8 +505,10 @@ onMounted(() => {
   // }
 
   checkAccountType()
-  // 测试数据获取
 
+  if (store.LoginID == '') {
+    await router.push('/Register2')
+  }
 })
 </script>
 
@@ -880,7 +890,11 @@ onMounted(() => {
       </el-descriptions-item>
     </el-descriptions>
     <el-divider />
-    <el-transfer v-if="dialogDetailsVisible.authorise" v-model="transferValue" :data="transferData" />
+    <el-transfer
+        v-if="dialogDetailsVisible.authorise"
+        v-model="transferValue"
+        :titles="['Source', 'Target']"
+        :data="transferData" />
 
     <template #footer>
       <span class="dialog-footer">
